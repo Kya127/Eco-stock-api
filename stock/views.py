@@ -4,10 +4,12 @@ from .serializers import WarehouseSerializer, ProductSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum
+from .permissions import IsAdminOrReadOnly
 
 class WarehouseViewSet(viewsets.ModelViewSet):
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     # --------- BOUTON PERSONNALISÉ : AUDIT --------------
     # URL : GET /api/warehouses/{id}/audit/
@@ -32,6 +34,7 @@ class WarehouseViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     # --- BOUTON PERSONNALISÉ : DÉPLACER ------------
     # URL : POST /api/products/{id}/transfer_product/
@@ -85,6 +88,6 @@ class ProductViewSet(viewsets.ModelViewSet):
                 warehouse=hangar_destination
             )
             
-        return Response({"message": f"Transfert réussi de {quantite_a_deplacer} unités vers {hangar_destination.nom}."}, status=status.HTTP_200_OK)
+        return Response({"message": f"Transfert réussi de {quantite_a_deplacer} unités de {produit.nom} vers {hangar_destination.nom}."}, status=status.HTTP_200_OK)
 
 
